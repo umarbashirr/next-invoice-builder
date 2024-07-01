@@ -14,7 +14,7 @@ const OrganizationLayout = ({ children }: { children: ReactNode }) => {
       <Sidebar />
       <div className="pl-56">
         <OrgHeader />
-        {children}
+        <div className="p-4">{children}</div>
       </div>
     </div>
   );
