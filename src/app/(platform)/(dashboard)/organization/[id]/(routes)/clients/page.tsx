@@ -4,6 +4,7 @@ import {
   ClientTableColumnProps,
   clientTableColumns,
 } from "./_components/ClientTableColumns";
+import AddNewClient from "./_components/AddNewClient";
 
 const ClientsPage = () => {
   const clients: ClientTableColumnProps[] = [
@@ -34,7 +35,7 @@ const ClientsPage = () => {
           </p>
         </div>
         <div>
-          <Button>Add Client</Button>
+          <AddNewClient />
         </div>
       </div>
       <div>
