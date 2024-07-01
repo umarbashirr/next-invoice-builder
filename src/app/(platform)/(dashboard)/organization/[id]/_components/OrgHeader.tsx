@@ -9,7 +9,7 @@ const OrgHeader = () => {
       <div className="flex items-center justify-end gap-4">
         <OrganizationSwitcher hidePersonal={true} />
         <SignedIn>
-          <UserButton />
+          <UserButton afterSignOutUrl="/sign-in" />
         </SignedIn>
       </div>
     </header>
