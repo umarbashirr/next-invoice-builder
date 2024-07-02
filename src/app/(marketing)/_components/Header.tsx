@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Logo from "./Logo";
+import { SignOutButton, SignedIn } from "@clerk/nextjs";
 
 const Header = () => {
   return (
@@ -21,6 +22,9 @@ const Header = () => {
           </Link>
         </nav>
         <div className="flex items-center justify-end gap-2">
+          <SignedIn>
+            <SignOutButton />
+          </SignedIn>
           <Button asChild variant="ghost">
             <Link href={"/sign-in"}>Sign in</Link>
           </Button>

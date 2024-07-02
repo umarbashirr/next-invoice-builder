@@ -4,10 +4,12 @@ import { ReactNode } from "react";
 import Sidebar from "./_components/Sidebar";
 import OrgHeader from "./_components/OrgHeader";
 
-const OrganizationLayout = ({ children }: { children: ReactNode }) => {
-  const { userId } = auth();
+const OrganizationLayout = async ({ children }: { children: ReactNode }) => {
+  const { userId } = await auth();
 
-  if (!userId) redirect("/sign-in");
+  if (!userId) {
+    redirect("/sign-in");
+  }
 
   return (
     <div className="w-full h-full">

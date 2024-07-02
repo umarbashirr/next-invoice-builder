@@ -6,12 +6,12 @@ import { ArrowUpDown } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export type ClientTableColumnProps = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  city: string;
-  country: string;
+  id: number;
+  name: string | null;
+  email?: string | null;
+  phone?: string | null;
+  city?: string | null;
+  country?: string | null;
 };
 
 export const clientTableColumns: ColumnDef<ClientTableColumnProps>[] = [

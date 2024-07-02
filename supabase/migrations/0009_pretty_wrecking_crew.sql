@@ -1,0 +1,1 @@
+ALTER TABLE "clients_table" ALTER COLUMN "org_id" SET DATA TYPE text;

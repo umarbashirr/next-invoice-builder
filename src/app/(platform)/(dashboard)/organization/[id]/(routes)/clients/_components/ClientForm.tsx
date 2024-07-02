@@ -14,11 +14,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useEffect, useRef } from "react";
+import { createClient } from "../actions";
+import { toast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
-const clientFormSchema = z.object({
+export const clientFormSchema = z.object({
   name: z.string(),
-  email: z.string().email(),
+  email: z.string().email().optional(),
   phone: z.string().optional(),
+  isShippingSameAsBilling: z.boolean().optional(),
   address: z.object({
     street: z.string().optional(),
     city: z.string().optional(),
@@ -36,6 +42,7 @@ const clientFormSchema = z.object({
 });
 
 const ClientForm = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof clientFormSchema>>({
     resolver: zodResolver(clientFormSchema),
     defaultValues: {
@@ -49,6 +56,7 @@ const ClientForm = () => {
         country: "",
         zip: "",
       },
+      isShippingSameAsBilling: false,
       shippingAddress: {
         street: "",
         city: "",
@@ -58,10 +66,66 @@ const ClientForm = () => {
       },
     },
   });
+  const prevIsShippingSameAsBillingRef = useRef(
+    form.getValues("isShippingSameAsBilling")
+  );
 
   const onSubmit = async (values: z.infer<typeof clientFormSchema>) => {
-    console.log(values);
+    try {
+      const response = await createClient(values);
+
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+
+      console.log(response.data);
+      toast({
+        title: "Success",
+        description: "Client created successfully",
+      });
+      router.refresh();
+    } catch (error: any) {
+      console.error(error?.message);
+    }
   };
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => {
+      if (name === "isShippingSameAsBilling") {
+        const prevIsShippingSameAsBilling =
+          prevIsShippingSameAsBillingRef.current;
+        const currentIsShippingSameAsBilling = value.isShippingSameAsBilling;
+
+        if (prevIsShippingSameAsBilling !== currentIsShippingSameAsBilling) {
+          prevIsShippingSameAsBillingRef.current =
+            currentIsShippingSameAsBilling;
+
+          if (currentIsShippingSameAsBilling) {
+            // Copy billing address to shipping address when checked
+            form.setValue("shippingAddress", value.address || {}, {
+              shouldValidate: false,
+              shouldDirty: false,
+            });
+          } else {
+            // Clear shipping address when unchecked
+            form.setValue(
+              "shippingAddress",
+              {
+                street: "",
+                city: "",
+                state: "",
+                country: "",
+                zip: "",
+              },
+              { shouldValidate: false, shouldDirty: false }
+            );
+          }
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   return (
     <div>
@@ -112,6 +176,7 @@ const ClientForm = () => {
               )}
             />
           </fieldset>
+
           <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-solid border-gray-300 p-3">
             <legend>Billing Address</legend>
             <FormField
@@ -180,6 +245,23 @@ const ClientForm = () => {
               )}
             />
           </fieldset>
+          <div>
+            <FormField
+              name="isShippingSameAsBilling"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="flex items-end gap-2">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel>Same as Billing Address</FormLabel>
+                </FormItem>
+              )}
+            />
+          </div>
           <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-solid border-gray-300 p-3">
             <legend>Shipping Address</legend>
             <FormField
