@@ -75,10 +75,10 @@ const ProductForm = () => {
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="col-span-2">
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea rows={5} {...field} />
+                    <Textarea rows={10} {...field} className="resize-none" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
